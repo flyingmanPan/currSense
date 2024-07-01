@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>File Upload Form</title>
+</head>
+<body>
+
+<form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>
+   <input type='file' name='update'>
+   <input type='submit' value='Update'>
+</form>
+
+<div id='prg'>progress: 0%</div>
+
+<script>
+    document.getElementById('upload_form').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const form = this;
+        const data = new FormData(form);
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', '/update');
+        xhr.upload.addEventListener('progress', function(evt) {
+            if (evt.lengthComputable) {
+                const percent = Math.round((evt.loaded / evt.total) * 100);
+                document.getElementById('prg').textContent = `progress: ${percent}%`;
+            }
+        });
+
+        xhr.onload = function() {
+            if (xhr.status === 200) {
+                console.log('success!');
+            } else {
+                console.error('Error occurred during upload:', xhr.responseText);
+            }
+        };
+
+        xhr.onerror = function() {
+            console.error('An error occurred while making the request.');
+        };
+
+        xhr.send(data);
+    });
+</script>
+
+</body>
+</html>
